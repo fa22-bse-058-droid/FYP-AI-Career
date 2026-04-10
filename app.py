@@ -39,6 +39,17 @@ from analyzer.gap import detect_skill_gaps
 from analyzer.suggestions import generate_suggestions          # ← fixed: was suggerstions
 from analyzer.similarity import calculate_similarity, is_similarity_available
 from analyzer.utilities import validate_file, get_file_size_mb, check_section_completeness  # ← fixed: was utilites
+from job_auto_apply.service import (
+    save_uploaded_cv,
+    update_filters,
+    get_filters,
+    set_auto_apply_permission,
+    get_auto_apply_permission,
+    scrape_jobs_for_cv,
+    get_matched_jobs,
+    trigger_auto_apply,
+    get_application_logs,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -152,6 +163,7 @@ def _upload_section():
         with st.spinner("🔄 Extracting text from file…"):
             file_bytes = uploaded.read()
             cv_text = extract_text_from_bytes(file_bytes, uploaded.name)
+            save_uploaded_cv(file_bytes, uploaded.name)
 
         if not cv_text or len(cv_text.strip()) < 50:
             st.error(
@@ -498,6 +510,101 @@ def _export_section(analysis: dict):
         use_container_width=True,
     )
 
+
+def _job_auto_apply_section():
+    st.divider()
+    st.subheader("🧭 Job Scraping + Auto-Apply")
+    st.caption("Workflow: scrape → filter → permission → auto-apply → logs")
+
+    current_filters = get_filters()
+    job_type_options = ["Any", "Full-time", "Part-time", "Contract", "Internship", "Remote"]
+    current_job_type = current_filters.get("job_type", "Any")
+    selected_index = job_type_options.index(current_job_type) if current_job_type in job_type_options else 0
+    with st.expander("🎛️ Filters & Permission", expanded=True):
+        role = st.text_input("Role", value=current_filters.get("role", ""))
+        location = st.text_input("Location", value=current_filters.get("location", ""))
+        col1, col2 = st.columns(2)
+        with col1:
+            salary_min = st.number_input(
+                "Minimum Salary", min_value=0, step=1000, value=int(current_filters.get("salary_min", 0))
+            )
+        with col2:
+            salary_max = st.number_input(
+                "Maximum Salary", min_value=0, step=1000, value=int(current_filters.get("salary_max", 0))
+            )
+        job_type = st.selectbox(
+            "Job Type",
+            options=job_type_options,
+            index=selected_index,
+        )
+        blacklist_raw = st.text_area(
+            "Blacklist (comma-separated)",
+            value=", ".join(current_filters.get("blacklist", [])),
+            placeholder="e.g. unpaid, senior, night shift",
+        )
+
+        if st.button("💾 Save Filters", use_container_width=True):
+            update_filters(
+                {
+                    "role": role,
+                    "location": location,
+                    "salary_min": int(salary_min),
+                    "salary_max": int(salary_max),
+                    "job_type": job_type,
+                    "blacklist": [x.strip() for x in blacklist_raw.split(",") if x.strip()],
+                }
+            )
+            st.success("Filters saved.")
+
+        enabled = st.checkbox("Allow Auto-Apply", value=get_auto_apply_permission())
+        if st.button("🔐 Update Permission", use_container_width=True):
+            set_auto_apply_permission(enabled)
+            st.success(f"Auto-apply permission set to {enabled}.")
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        if st.button("🔎 Scrape & Match Jobs", use_container_width=True):
+            jobs = scrape_jobs_for_cv(st.session_state.get("cv_text", "") or "")
+            st.success(f"Stored {len(jobs)} jobs. Eligible: {len([j for j in jobs if j.get('eligible')])}.")
+    with col_b:
+        if st.button("🤖 Trigger Auto-Apply", type="primary", use_container_width=True):
+            result = trigger_auto_apply()
+            if result.get("triggered"):
+                st.success(
+                    f"{result.get('reason')}. Attempted: {result.get('attempted_count')} | Applied: {result.get('applied_count')}"
+                )
+            else:
+                st.warning(result.get("reason", "Auto-apply not started."))
+
+    matched = get_matched_jobs()
+    st.markdown("#### ✅ Matched / Eligible Jobs")
+    if matched:
+        st.dataframe(
+            [
+                {
+                    "title": j.get("title"),
+                    "company": j.get("company"),
+                    "location": j.get("location"),
+                    "salary": j.get("salary"),
+                    "match_score": j.get("match_score"),
+                    "source": j.get("source"),
+                    "link": j.get("link"),
+                }
+                for j in matched
+            ],
+            use_container_width=True,
+            hide_index=True,
+        )
+    else:
+        st.info("No eligible jobs yet. Save filters, then click Scrape & Match Jobs.")
+
+    logs = get_application_logs()
+    st.markdown("#### 📝 Auto-Apply Logs")
+    if logs:
+        st.dataframe(logs, use_container_width=True, hide_index=True)
+    else:
+        st.info("No application attempts logged yet.")
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -551,6 +658,8 @@ def main():
 
     st.divider()
     _display_similarity(analysis["similarity"])
+
+    _job_auto_apply_section()
 
     _export_section(analysis)
 

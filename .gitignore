@@ -2,3 +2,5 @@ hihi/
 *.pyc
 __pycache__/
 .env
+data/job_auto_apply_store.json
+data/secure_cv/
