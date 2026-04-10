@@ -1,6 +1,7 @@
 import re
 from typing import Any, Dict, List, Set
 
+MAX_MATCH_REASONS = 15
 
 def extract_cv_keywords(cv_text: str, skills: Dict[str, List[str]]) -> Set[str]:
     raw_tokens = re.findall(r"[A-Za-z][A-Za-z0-9+#.\-]{1,30}", cv_text or "")
@@ -72,9 +73,8 @@ def mark_eligible_jobs(
 
         normalized = dict(job)
         normalized["match_score"] = score
-        normalized["match_reasons"] = hits[:15]
+        normalized["match_reasons"] = hits[:MAX_MATCH_REASONS]
         normalized["eligible"] = eligible
         scored_jobs.append(normalized)
 
     return sorted(scored_jobs, key=lambda x: x.get("match_score", 0), reverse=True)
-

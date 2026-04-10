@@ -11,6 +11,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 CV_DIR = DATA_DIR / "secure_cv"
 STORE_PATH = DATA_DIR / "job_auto_apply_store.json"
+MAX_APPLICATION_LOGS = 500
 
 
 def _utc_now() -> str:
@@ -137,10 +138,9 @@ def log_application(entry: Dict[str, Any]) -> None:
     store = _read_store()
     logs = store.get("application_logs", [])
     logs.append(entry)
-    store["application_logs"] = logs[-500:]
+    store["application_logs"] = logs[-MAX_APPLICATION_LOGS:]
     _write_store(store)
 
 
 def get_application_logs() -> List[Dict[str, Any]]:
     return _read_store().get("application_logs", [])
-
