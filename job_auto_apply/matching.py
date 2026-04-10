@@ -76,8 +76,8 @@ def mark_eligible_jobs(
     for job in jobs:
         description = f"{job.get('title', '')} {job.get('description', '')}".lower()
         hits = sorted({kw for kw in cv_keywords if kw and kw in description})
-        denominator = max(len(cv_keywords), 1)
-        score = round((len(hits) / denominator) * 100, 2)
+        cv_keyword_count = max(len(cv_keywords), 1)
+        score = round((len(hits) / cv_keyword_count) * 100, 2)
 
         allowed_by_filters = _job_matches_filters(job, filters)
         eligible = allowed_by_filters and score >= min_match_score

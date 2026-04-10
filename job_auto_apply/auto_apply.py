@@ -27,12 +27,15 @@ def attempt_apply_once(job: Dict[str, Any], cv_path: str) -> Dict[str, Any]:
             "timestamp": _utc_now(),
         }
 
+    selenium_timeout_exception = None
     try:
         from selenium import webdriver
+        from selenium.common.exceptions import TimeoutException as SeleniumTimeoutException
         from selenium.webdriver.common.by import By
         from selenium.webdriver.support import expected_conditions as EC
         from selenium.webdriver.support.ui import WebDriverWait
         from selenium.webdriver.chrome.options import Options as ChromeOptions
+        selenium_timeout_exception = SeleniumTimeoutException
     except Exception:
         return {
             "status": "failed",
@@ -115,6 +118,8 @@ def attempt_apply_once(job: Dict[str, Any], cv_path: str) -> Dict[str, Any]:
         )
         return {"status": "success", "reason": "Application submitted", "timestamp": _utc_now()}
     except Exception as e:
+        if selenium_timeout_exception and isinstance(e, selenium_timeout_exception):
+            return {"status": "failed", "reason": "Timeout during apply workflow", "timestamp": _utc_now()}
         if "timeout" in str(e).lower():
             return {"status": "failed", "reason": "Timeout during apply workflow", "timestamp": _utc_now()}
         return {"status": "failed", "reason": f"Automation error: {e}", "timestamp": _utc_now()}
