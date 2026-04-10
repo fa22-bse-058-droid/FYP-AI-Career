@@ -100,7 +100,13 @@ def attempt_apply_once(job: Dict[str, Any], cv_path: str) -> Dict[str, Any]:
         WebDriverWait(driver, 8).until(
             EC.any_of(
                 EC.url_changes(link),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(., 'thank you') or contains(., 'application submitted')]")),
+                EC.presence_of_element_located(
+                    (
+                        By.XPATH,
+                        "//*[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'thank you') "
+                        "or contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'application submitted')]",
+                    )
+                ),
             )
         )
         return {"status": "success", "reason": "Application submitted", "timestamp": _utc_now()}
@@ -111,4 +117,3 @@ def attempt_apply_once(job: Dict[str, Any], cv_path: str) -> Dict[str, Any]:
     finally:
         if driver is not None:
             driver.quit()
-
