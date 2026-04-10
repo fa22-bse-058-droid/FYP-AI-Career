@@ -91,6 +91,7 @@ def trigger_auto_apply() -> Dict[str, Any]:
 
     rules = get_auto_apply_rules()
     max_retries = int(rules.get("max_retries_per_job", 1))
+    # Total attempts = initial attempt + configured retry count.
     total_attempts_allowed = max(1, max_retries + 1)
     eligible_jobs = [job for job in get_jobs() if job.get("eligible")]
     applied_count = 0

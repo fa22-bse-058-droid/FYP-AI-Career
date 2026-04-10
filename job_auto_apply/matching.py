@@ -2,6 +2,8 @@ import re
 from typing import Any, Dict, List, Set, Tuple
 
 MAX_MATCH_REASONS = 15
+MIN_TOKEN_FREQUENCY = 2
+MIN_TOKEN_LENGTH = 2
 
 
 def extract_cv_keywords(cv_text: str, skills: Dict[str, List[str]]) -> Set[str]:
@@ -14,7 +16,9 @@ def extract_cv_keywords(cv_text: str, skills: Dict[str, List[str]]) -> Set[str]:
         lower = token.lower()
         token_counts[lower] = token_counts.get(lower, 0) + 1
 
-    frequent = {t for t, c in token_counts.items() if c >= 2 and len(t) > 2}
+    frequent = {
+        t for t, c in token_counts.items() if c >= MIN_TOKEN_FREQUENCY and len(t) > MIN_TOKEN_LENGTH
+    }
     skill_tokens = {
         s.lower() for s in (skills.get("technical", []) + skills.get("soft", [])) if s
     }

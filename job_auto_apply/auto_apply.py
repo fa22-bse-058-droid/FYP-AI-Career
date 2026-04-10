@@ -3,6 +3,8 @@ from typing import Any, Dict
 
 XPATH_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 XPATH_LOWER = "abcdefghijklmnopqrstuvwxyz"
+PAGE_LOAD_TIMEOUT_SECONDS = 20
+SUBMIT_CONFIRMATION_TIMEOUT_SECONDS = 8
 
 
 def _utc_now() -> str:
@@ -45,7 +47,7 @@ def attempt_apply_once(job: Dict[str, Any], cv_path: str) -> Dict[str, Any]:
         options.add_argument("--disable-gpu")
         options.add_argument("--no-sandbox")
         driver = webdriver.Chrome(options=options)
-        driver.set_page_load_timeout(20)
+        driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT_SECONDS)
         driver.get(link)
 
         page = driver.page_source.lower()
@@ -99,7 +101,7 @@ def attempt_apply_once(job: Dict[str, Any], cv_path: str) -> Dict[str, Any]:
                 "timestamp": _utc_now(),
             }
 
-        WebDriverWait(driver, 8).until(
+        WebDriverWait(driver, SUBMIT_CONFIRMATION_TIMEOUT_SECONDS).until(
             EC.any_of(
                 EC.url_changes(link),
                 EC.presence_of_element_located(
