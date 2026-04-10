@@ -564,7 +564,7 @@ def _job_auto_apply_section():
     col_a, col_b = st.columns(2)
     with col_a:
         if st.button("🔎 Scrape & Match Jobs", use_container_width=True):
-            jobs = scrape_jobs_for_cv(st.session_state.cv_text or "")
+            jobs = scrape_jobs_for_cv(st.session_state.get("cv_text", "") or "")
             st.success(f"Stored {len(jobs)} jobs. Eligible: {len([j for j in jobs if j.get('eligible')])}.")
     with col_b:
         if st.button("🤖 Trigger Auto-Apply", type="primary", use_container_width=True):

@@ -3,7 +3,11 @@ from typing import Any, Dict, List, Set
 
 MAX_MATCH_REASONS = 15
 
+
 def extract_cv_keywords(cv_text: str, skills: Dict[str, List[str]]) -> Set[str]:
+    """
+    Build a CV keyword set from repeated tokens and extracted skill names.
+    """
     raw_tokens = re.findall(r"[A-Za-z][A-Za-z0-9+#.\-]{1,30}", cv_text or "")
     token_counts: Dict[str, int] = {}
     for token in raw_tokens:
@@ -17,7 +21,10 @@ def extract_cv_keywords(cv_text: str, skills: Dict[str, List[str]]) -> Set[str]:
     return frequent | skill_tokens
 
 
-def _parse_salary_range(salary_str: str) -> tuple:
+def _parse_salary_range(salary_str: str) -> tuple[int, int]:
+    """
+    Parse salary text (e.g. '70000-90000') into (min_salary, max_salary).
+    """
     nums = [int(n) for n in re.findall(r"\d+", salary_str or "")]
     if not nums:
         return 0, 0

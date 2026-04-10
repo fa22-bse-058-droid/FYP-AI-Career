@@ -1,6 +1,9 @@
 from datetime import datetime, timezone
 from typing import Any, Dict
 
+XPATH_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+XPATH_LOWER = "abcdefghijklmnopqrstuvwxyz"
+
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -55,8 +58,8 @@ def attempt_apply_once(job: Dict[str, Any], cv_path: str) -> Dict[str, Any]:
 
         # Known apply buttons only; otherwise stop to avoid unsafe automation.
         apply_xpath = (
-            "//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]"
-            "|//a[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]"
+            f"//button[contains(translate(., '{XPATH_UPPER}', '{XPATH_LOWER}'), 'apply')]"
+            f"|//a[contains(translate(., '{XPATH_UPPER}', '{XPATH_LOWER}'), 'apply')]"
         )
         apply_buttons = driver.find_elements(By.XPATH, apply_xpath)
         if not apply_buttons:
@@ -102,8 +105,8 @@ def attempt_apply_once(job: Dict[str, Any], cv_path: str) -> Dict[str, Any]:
                 EC.presence_of_element_located(
                     (
                         By.XPATH,
-                        "//*[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'thank you') "
-                        "or contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'application submitted')]",
+                        f"//*[contains(translate(., '{XPATH_UPPER}', '{XPATH_LOWER}'), 'thank you') "
+                        f"or contains(translate(., '{XPATH_UPPER}', '{XPATH_LOWER}'), 'application submitted')]",
                     )
                 ),
             )
