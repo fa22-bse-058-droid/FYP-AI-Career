@@ -82,7 +82,7 @@ def attempt_apply_once(job: Dict[str, Any], cv_path: str) -> Dict[str, Any]:
         submit_selectors = [
             "//button[@type='submit']",
             "//input[@type='submit']",
-            "//button[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'submit')]",
+            f"//button[contains(translate(., '{XPATH_UPPER}', '{XPATH_LOWER}'), 'submit')]",
         ]
         submitted = False
         for sel in submit_selectors:

@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Set, Tuple
 
 MAX_MATCH_REASONS = 15
 
@@ -21,7 +21,7 @@ def extract_cv_keywords(cv_text: str, skills: Dict[str, List[str]]) -> Set[str]:
     return frequent | skill_tokens
 
 
-def _parse_salary_range(salary_str: str) -> tuple[int, int]:
+def _parse_salary_range(salary_str: str) -> Tuple[int, int]:
     """
     Parse salary text (e.g. '70000-90000') into (min_salary, max_salary).
     """
