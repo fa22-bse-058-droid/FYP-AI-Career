@@ -17,7 +17,7 @@ const steps: Step[] = [
     number: '02',
     title: 'Get AI Insights',
     description:
-      'Receive a detailed score, skill gap report, and personalised recommendations tailored to your target role.',
+      'Receive a detailed score, skill gap report, and personalized recommendations tailored to your target role.',
   },
   {
     number: '03',

@@ -20,7 +20,7 @@ const features: Feature[] = [
     icon: <BrainCircuit size={22} />,
     title: 'Skill Gap Detection',
     description:
-      'Identify missing high-demand skills for your target role and get a prioritised learning roadmap.',
+      'Identify missing high-demand skills for your target role and get a prioritized learning roadmap.',
   },
   {
     icon: <Briefcase size={22} />,
