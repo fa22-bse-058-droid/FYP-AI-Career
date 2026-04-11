@@ -3,30 +3,38 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #0A0F1E;
+  --color-bg: #080B14;
+  --color-accent: #5B5BD6;
+  --color-accent-violet: #7C3AED;
+  /* legacy */
   --color-accent1: #00D4FF;
   --color-accent2: #7C3AED;
   --color-accent3: #EC4899;
 }
 
 * { box-sizing: border-box; }
-body { background: #0A0F1E; color: white; font-family: 'Inter', sans-serif; margin: 0; }
+body {
+  background: #080B14;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  margin: 0;
+}
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0A0F1E; }
-::-webkit-scrollbar-thumb { background: #7C3AED; border-radius: 3px; }
+::-webkit-scrollbar-track { background: #080B14; }
+::-webkit-scrollbar-thumb { background: #5B5BD6; border-radius: 3px; }
 
-/* Glassmorphism */
+/* Glassmorphism — used sparingly */
 .glass {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.04);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 16px;
 }
 
-/* Gradient text */
+/* Legacy gradient text — used by non-landing pages */
 .gradient-text {
   background: linear-gradient(135deg, #00D4FF, #7C3AED, #EC4899);
   -webkit-background-clip: text;
@@ -34,7 +42,7 @@ body { background: #0A0F1E; color: white; font-family: 'Inter', sans-serif; marg
   background-clip: text;
 }
 
-/* Glow button */
+/* Legacy glow button — used by non-landing pages */
 .btn-glow {
   background: linear-gradient(135deg, #00D4FF, #7C3AED);
   border: none;
@@ -51,17 +59,11 @@ body { background: #0A0F1E; color: white; font-family: 'Inter', sans-serif; marg
   transform: translateY(-2px);
 }
 
-/* Neon border */
+/* Neon border — legacy */
 .neon-border {
   border: 1px solid rgba(0, 212, 255, 0.3);
   box-shadow: 0 0 20px rgba(0, 212, 255, 0.1), inset 0 0 20px rgba(0, 212, 255, 0.05);
 }
 
-input, textarea, select {
-  outline: none;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
+input, textarea, select { outline: none; }
+a { color: inherit; text-decoration: none; }
