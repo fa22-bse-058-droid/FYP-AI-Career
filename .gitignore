@@ -4,3 +4,7 @@ __pycache__/
 .env
 data/job_auto_apply_store.json
 data/secure_cv/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/

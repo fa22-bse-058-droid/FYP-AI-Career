@@ -1,63 +1,80 @@
-# AI CV Analyzer — Setup & Run Guide
-## Windows 11 | Python 3.11
+# AI Career — Setup & Run Guide
+
+A modern AI-powered career platform with a dark cosmic React frontend and FastAPI backend.
 
 ---
 
 ## Project Structure
 
 ```
-cv_analyzer/
-├── app.py                    ← Streamlit entry point
-├── requirements.txt
-├── analyzer/
-│   ├── __init__.py           ← (was _init_.py — fixed)
-│   ├── parser.py
-│   ├── skills.py
-│   ├── scorer.py
-│   ├── gap.py
-│   ├── suggestions.py        ← (was suggerstions.py — fixed)
-│   ├── similarity.py
-│   └── utilities.py          ← (was utilites.py — fixed)
-└── models/
-    ├── skill_db.json
-    └── market_skills.json
+FYP-AI-Career/
+├── backend/
+│   ├── main.py               ← FastAPI entry point
+│   └── requirements.txt      ← Backend Python deps
+├── frontend/
+│   ├── src/
+│   │   ├── pages/            ← Landing, Login, Signup, Dashboard, Analyzer, Jobs
+│   │   ├── components/       ← Navbar, ParticleBackground, ProtectedRoute
+│   │   ├── contexts/         ← AuthContext (JWT)
+│   │   └── api/              ← Axios client
+│   ├── package.json
+│   └── vite.config.ts
+├── analyzer/                 ← Python AI analyzer modules
+├── job_auto_apply/           ← Job scraping & auto-apply modules
+└── models/                   ← skill_db.json, market_skills.json
 ```
 
 ---
 
-## 1. Create virtual environment
+## Quick Start
 
-```powershell
+### 1. Backend (FastAPI)
+
+```bash
+cd backend
 python -m venv venv
+# Windows:
 venv\Scripts\activate
-```
+# Mac/Linux:
+source venv/bin/activate
 
-## 2. Install dependencies
-
-```powershell
 pip install -r requirements.txt
-```
-
-## 3. Download spaCy language model
-
-```powershell
+pip install -r ../requirements.txt   # Install analyzer deps
 python -m spacy download en_core_web_sm
+
+uvicorn main:app --reload --port 8000
 ```
 
-## 4. Run the app
+The API will be available at `http://localhost:8000`.  
+Interactive docs at `http://localhost:8000/docs`.
 
-```powershell
-streamlit run app.py
+### 2. Frontend (React + TypeScript)
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
+
+The app will be available at `http://localhost:5173`.
 
 ---
+
+## Features
+
+| Module | Description |
+|--------|-------------|
+| 🔐 Auth | JWT-based signup/login |
+| 📄 CV Analyzer | AI-powered CV scoring, skill extraction, gap analysis |
+| 🔍 Job Matching | Semantic similarity with job descriptions |
+| 🚀 Auto Apply | Automated job application submission |
 
 ## Notes
 
 - **spaCy** is optional but recommended — without it the app falls back to keyword-only skill extraction.
-- **sentence-transformers** is optional — without it the similarity score shows 0% and a warning is displayed.
-- Both missing dependencies are shown clearly in the sidebar so you always know the module status.
-- The first run of sentence-transformers will download the `all-MiniLM-L6-v2` model (~90 MB) automatically.
+- **sentence-transformers** is optional — without it the similarity score shows 0%.
+- The first run of sentence-transformers downloads the `all-MiniLM-L6-v2` model (~90 MB) automatically.
+- The backend uses an in-memory user store. Data resets on server restart.
 
 ---
 
